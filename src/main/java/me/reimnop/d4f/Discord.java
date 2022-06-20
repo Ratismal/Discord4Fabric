@@ -1,6 +1,7 @@
 package me.reimnop.d4f;
 
 import club.minnced.discord.webhook.WebhookClient;
+import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import me.reimnop.d4f.exceptions.ChannelException;
 import me.reimnop.d4f.exceptions.GuildException;
@@ -35,7 +36,7 @@ public class Discord {
         jda.awaitReady();
 
         // init webhook
-        webhookClient = WebhookClient.withUrl(config.webhookUrl);
+        webhookClient = new WebhookClientBuilder(config.webhookUrl).build();
     }
 
     public void initCache() throws GuildException {
@@ -55,11 +56,19 @@ public class Discord {
         return guild;
     }
 
-    private TextChannel getTextChannel() throws GuildException, ChannelException {
-        TextChannel channel = getGuild().getChannelById(TextChannel.class, config.channelId);
+    private MessageChannel getTextChannel() throws GuildException, ChannelException {
+        MessageChannel channel;
+
+        if (config.useThread) {
+            channel = getGuild().getChannelById(ThreadChannel.class, config.channelId);
+        } else {
+            channel = getGuild().getChannelById(TextChannel.class, config.channelId);
+        }
+
         if (channel == null) {
             throw new ChannelException(config.channelId);
         }
+
         return channel;
     }
 
@@ -76,11 +85,16 @@ public class Discord {
 
     public void sendPlayerMessage(PlayerEntity sender, Text name, Text message) {
         WebhookMessageBuilder wmb = new WebhookMessageBuilder()
+                // .setThreadId()
                 .setAvatarUrl(Utils.getAvatarUrl(sender.getUuid()))
                 .setUsername(name.getString())
                 .setContent(message.getString());
 
-        webhookClient.send(wmb.build());
+        if (config.useThread) {
+            webhookClient.onThread(config.channelId).send(wmb.build());
+        } else {
+            webhookClient.send(wmb.build());
+        }
     }
 
     public void sendEmbedMessageUsingPlayerAvatar(PlayerEntity sender, Color color, String message, String description) {
@@ -116,10 +130,13 @@ public class Discord {
 
     public void setChannelTopic(Text topic) {
         try {
-            getTextChannel()
-                    .getManager()
-                    .setTopic(topic.getString())
-                    .queue();
+            var channel = getTextChannel();
+            if (channel instanceof TextChannel) {
+                ((TextChannel) getTextChannel())
+                        .getManager()
+                        .setTopic(topic.getString())
+                        .queue();
+            }
         } catch (Exception e) {
             Utils.logException(e);
         }

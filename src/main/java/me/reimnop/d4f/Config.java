@@ -12,6 +12,7 @@ import java.io.IOException;
 public class Config {
     public String token = "";
     public String webhookUrl = "";
+    public Boolean useThread = false;
     public Long guildId = 0L;
     public Long channelId = 0L;
     public Boolean announceServerStartStop = true;
@@ -45,6 +46,7 @@ public class Config {
         jsonObject.addProperty("webhook_url", webhookUrl);
         jsonObject.addProperty("guild_id", guildId);
         jsonObject.addProperty("channel_id", channelId);
+        jsonObject.addProperty("use_thread", useThread);
         jsonObject.addProperty("announce_server_start_stop", announceServerStartStop);
         jsonObject.addProperty("server_start", serverStartMessage);
         jsonObject.addProperty("server_stop", serverStopMessage);
@@ -89,6 +91,7 @@ public class Config {
         webhookUrl = getStringOrDefault(obj, "webhook_url", webhookUrl);
         guildId = getLongOrDefault(obj, "guild_id", guildId);
         channelId = getLongOrDefault(obj, "channel_id", channelId);
+        useThread = getBooleanOrDefault(obj, "use_thread", useThread);
         announceServerStartStop = getBooleanOrDefault(obj, "announce_server_start_stop", announceServerStartStop);
         serverStartMessage = getStringOrDefault(obj, "server_start", serverStartMessage);
         serverStopMessage = getStringOrDefault(obj, "server_stop", serverStopMessage);
