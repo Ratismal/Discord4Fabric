@@ -1,6 +1,5 @@
-<h1 align="center">Welcome to Discord4Fabric 👋</h1>
+<h1>Discord4Fabric</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.2.0-blue.svg?cacheSeconds=2592000" />
   <a href="#" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
@@ -9,28 +8,35 @@
   </a>
 </p>
 
-> A beautiful Discord bot client for Fabric inspired by [DiscordSRV](https://www.spigotmc.org/resources/discordsrv.18494/)
+### Notice
+
+Development is massively slowing down due to in real life events that is happening to me. This project is not cancelled. 
+
+> Empower your Minecraft <-> Discord chat experience with features from [DiscordSRV](https://www.spigotmc.org/resources/discordsrv.18494/)! ❤️
 
 [![fabric api](https://i.imgur.com/Ol1Tcf8.png "Fabric API")](https://www.curseforge.com/minecraft/mc-mods/fabric-api)
 
+## Features
+
+- Advancement, death, join, leave, server start, server stop messages!
+- Webhook!
+- Everything is customizable!
+- Infinitely extensible thanks to Custom Events!
+
 ## Usage
 
-Click [here](https://github.com/Reimnop/Discord4Fabric/blob/main/USAGE.md)
+Click [here](USAGE.md)
 
 ## Author
 
-👤 **Reimnop**
+### 👤 Reimnop
 
-* Website: reimnop.me
+* Website: https://reimnop.me
 * Twitter: [@Reimnop](https://twitter.com/Reimnop)
-* Github: [@Reimnop](https://github.com/Reimnop)
+* GitHub: [@Reimnop](https://github.com/Reimnop)
 
 ## Credits
+
 Uses [Placeholder API](https://github.com/Patbox/TextPlaceholderAPI) by Patbox
 
-## Show your support
-
-Give a ⭐️ if this project helped you!
-
-***
-_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
+Thank you to [Crafatar](https://crafatar.com/) and [MCHeads](https://mc-heads.net) for providing avatars

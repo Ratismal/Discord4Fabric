@@ -15,6 +15,8 @@ public class Config {
     public Boolean useThread = false;
     public Long guildId = 0L;
     public Long channelId = 0L;
+    public Long consoleGuildId = 0L;
+    public Long consoleChannelId = 0L;
     public Boolean announceServerStartStop = true;
     public String serverStartMessage = ":white_check_mark: **Server started!**";
     public String serverStopMessage = ":negative_squared_cross_mark: **Server stopped!**";
@@ -33,12 +35,22 @@ public class Config {
     public String advancementTaskDescription = "%d4f:description%";
     public String advancementChallengeTitle = "%player:name% has completed the challenge [%d4f:title%]";
     public String advancementChallengeDescription = "%d4f:description%";
+    public boolean sendMessagesToDiscord = true;
     public String discordToMinecraftMessage = "[%d4f:nickname% on Discord] %d4f:message%";
+    public String discordToMinecraftWithReplyMessage = "[%d4f:nickname% on Discord (replying to %d4f:reply_nickname%)] %d4f:message%";
     public String discordName = "%player:name%";
     public String minecraftToDiscordMessage = "%d4f:message%";
+    // only used when webhook is unavailable, will attempt to convert webhook messages to plain messages using this config option
+    public String webhookToPlainMessage = "`%d4f:name%` %d4f:message%";
     public String discordPingFormat = "<blue>@%d4f:fullname%</blue>";
-    public Integer updateInterval = 100;
-    public String status = "Total player: %server:online%/%server:max_players% | Server TPS: %server:tps%";
+    public Integer updateInterval = 100; // 5 seconds
+    public String status = "Minecraft";
+    public Integer topicUpdateInterval = -1; // disabled by default due to huge rate limit
+    public String topic = "Total player: %server:online%/%server:max_players% | Server TPS: %server:tps%";
+    public Boolean forceOnlineUuid = false;
+    public Boolean requiresLinkedAccount = false;
+    public String avatarUrl = "https://crafatar.com/avatars/%s?overlay";
+    public String avatarUrlTextureHash = "https://mc-heads.net/avatar/%s"; // for fabrictailor compat
 
     public void writeConfig(File file) throws IOException {
         JsonObject jsonObject = new JsonObject();
@@ -47,6 +59,8 @@ public class Config {
         jsonObject.addProperty("guild_id", guildId);
         jsonObject.addProperty("channel_id", channelId);
         jsonObject.addProperty("use_thread", useThread);
+        jsonObject.addProperty("console_guild_id", consoleGuildId);
+        jsonObject.addProperty("console_channel_id", consoleChannelId);
         jsonObject.addProperty("announce_server_start_stop", announceServerStartStop);
         jsonObject.addProperty("server_start", serverStartMessage);
         jsonObject.addProperty("server_stop", serverStopMessage);
@@ -65,12 +79,21 @@ public class Config {
         jsonObject.addProperty("advancement_task_desc", advancementTaskDescription);
         jsonObject.addProperty("advancement_challenge", advancementChallengeTitle);
         jsonObject.addProperty("advancement_challenge_desc", advancementChallengeDescription);
+        jsonObject.addProperty("send_messages_to_discord", sendMessagesToDiscord);
         jsonObject.addProperty("discord_to_mc", discordToMinecraftMessage);
+        jsonObject.addProperty("discord_to_mc_reply", discordToMinecraftWithReplyMessage);
         jsonObject.addProperty("discord_name", discordName);
         jsonObject.addProperty("mc_to_discord", minecraftToDiscordMessage);
+        jsonObject.addProperty("webhook_to_plain", webhookToPlainMessage);
         jsonObject.addProperty("discord_ping", discordPingFormat);
         jsonObject.addProperty("update_interval", updateInterval);
         jsonObject.addProperty("status", status);
+        jsonObject.addProperty("topic_update_interval", topicUpdateInterval);
+        jsonObject.addProperty("topic", topic);
+        jsonObject.addProperty("force_online_uuid", forceOnlineUuid);
+        jsonObject.addProperty("requires_linked_account", requiresLinkedAccount);
+        jsonObject.addProperty("avatar_url", avatarUrl);
+        jsonObject.addProperty("avatar_url_texture_hash", avatarUrlTextureHash);
 
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting();
@@ -92,6 +115,8 @@ public class Config {
         guildId = getLongOrDefault(obj, "guild_id", guildId);
         channelId = getLongOrDefault(obj, "channel_id", channelId);
         useThread = getBooleanOrDefault(obj, "use_thread", useThread);
+        consoleGuildId = getLongOrDefault(obj, "console_guild_id", consoleGuildId);
+        consoleChannelId = getLongOrDefault(obj, "console_channel_id", consoleChannelId);
         announceServerStartStop = getBooleanOrDefault(obj, "announce_server_start_stop", announceServerStartStop);
         serverStartMessage = getStringOrDefault(obj, "server_start", serverStartMessage);
         serverStopMessage = getStringOrDefault(obj, "server_stop", serverStopMessage);
@@ -110,12 +135,21 @@ public class Config {
         advancementTaskDescription = getStringOrDefault(obj, "advancement_task_desc", advancementTaskDescription);
         advancementChallengeTitle = getStringOrDefault(obj, "advancement_challenge", advancementChallengeTitle);
         advancementChallengeDescription = getStringOrDefault(obj, "advancement_challenge_desc", advancementChallengeDescription);
+        sendMessagesToDiscord = getBooleanOrDefault(obj, "send_messages_to_discord", sendMessagesToDiscord);
         discordToMinecraftMessage = getStringOrDefault(obj, "discord_to_mc", discordToMinecraftMessage);
+        discordToMinecraftWithReplyMessage = getStringOrDefault(obj, "discord_to_mc_reply", discordToMinecraftWithReplyMessage);
         discordName = getStringOrDefault(obj, "discord_name", discordName);
         minecraftToDiscordMessage = getStringOrDefault(obj, "mc_to_discord", minecraftToDiscordMessage);
+        webhookToPlainMessage = getStringOrDefault(obj, "webhook_to_plain", webhookToPlainMessage);
         discordPingFormat = getStringOrDefault(obj, "discord_ping", discordPingFormat);
         updateInterval = getIntOrDefault(obj, "update_interval", updateInterval);
         status = getStringOrDefault(obj, "status", status);
+        topicUpdateInterval = getIntOrDefault(obj, "topic_update_interval", topicUpdateInterval);
+        topic = getStringOrDefault(obj, "topic", topic);
+        forceOnlineUuid = getBooleanOrDefault(obj, "force_online_uuid", forceOnlineUuid);
+        requiresLinkedAccount = getBooleanOrDefault(obj, "requires_linked_account", requiresLinkedAccount);
+        avatarUrl = getStringOrDefault(obj, "avatar_url", avatarUrl);
+        avatarUrlTextureHash = getStringOrDefault(obj, "avatar_url_texture_hash", avatarUrlTextureHash);
 
         reader.close();
     }

@@ -1,8 +1,10 @@
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
-    id 'maven-publish'
+    id "fabric-loom" version "0.12-SNAPSHOT"
+    id "com.matthewprenger.cursegradle" version "1.4.0"
+    id "com.modrinth.minotaur" version "2.+"
 }
 
+archivesBaseName = "${project.jar_name}-${project.minecraft_version}"
 version = project.mod_version
 group = project.maven_group
 
@@ -13,7 +15,21 @@ repositories {
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
 
-    maven { url "https://maven.nucleoid.xyz/" }
+    maven { url "https://maven.nucleoid.xyz" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
 }
 
 dependencies {
@@ -23,17 +39,26 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation ("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}") {
+        exclude group: "net.fabricmc.fabric-api", module: "fabric-gametest-api-v1"
+    }
 
     include modImplementation("eu.pb4:placeholder-api:${project.placeholder_version}")
 
     include implementation("net.dv8tion:JDA:${project.jda_version}") {
-        exclude module: 'opus-java'
+        exclude module: "opus-java"
     }
     include implementation("club.minnced:discord-webhooks:${project.webhook_version}")
+    include implementation("com.vdurmont:emoji-java:5.1.1")
+
+    include implementation("me.lucko:spark-api:0.1-SNAPSHOT")
+
+    // compat
+    modCompileOnly "curse.maven:vanish-424123:${project.vanish_version}"
+    modCompileOnly "maven.modrinth:fabrictailor:${project.fabrictailor_version}"
 
     // extra deps
-    include group: 'org.json', name: 'json', version: '20160212'
+    include "org.json:json:20160212"
     include "com.squareup.okio:okio:1.17.2"
     include "com.squareup.okhttp3:okhttp:3.13.0"
     include "org.apache.commons:commons-collections4:4.4"
@@ -71,7 +96,6 @@ java {
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
-    archivesBaseName = project.archives_base_name
     // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
     // if it is present.
     // If you remove this line, sources will not be generated.
@@ -84,19 +108,48 @@ jar {
     }
 }
 
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
+curseforge {
+    apiKey = System.getenv("CURSEFORGE_TOKEN")
+    if (apiKey == null) {
+        return
+    }
+
+    project {
+        id = "630956"
+        releaseType = "release"
+        changelogType = "markdown"
+        changelog = file("CHANGELOG.md")
+
+        addGameVersion project.minecraft_version
+
+        mainArtifact(remapJar) {
+            relations {
+                requiredDependency "fabric-api"
+            }
         }
     }
 
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
+    options {
+        forgeGradleIntegration = false // We're using Loom
+    }
+}
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    if (token == null) {
+        return
+    }
+
+    projectId = "discord4fabric"
+    versionNumber = "${project.mod_version}-${project.minecraft_version}"
+    versionType = "release"
+    uploadFile = remapJar
+    gameVersions = [project.minecraft_version]
+    changelog = file("CHANGELOG.md").text
+    dependencies {
+        // scope.type
+        // The scope can be `required`, `optional`, `incompatible`, or `embedded`
+        // The type can either be `project` or `version`
+        required.project "fabric-api"
     }
 }

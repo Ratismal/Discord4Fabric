@@ -9,18 +9,22 @@ A file named `discord4fabric.json` should now appear in your `config` folder ins
 
 Change `token` to your bot token. More information [here](https://discord.com/developers/docs/topics/oauth2#bots).
 
-Change `webhook` to your webhook URL. More information [here](https://discord.com/developers/docs/resources/webhook#create-webhook).
+Change `webhook` to your webhook URL (Optional). More information [here](https://discord.com/developers/docs/resources/webhook#create-webhook).
 
 Change `guild_id` to your server ID.
 
 Change `channel_id` to your text channel ID (where you want users to interact with the bot).
 
+Note: This mod requires the `GUILD_MEMBERS` intent. Please make sure you have it enabled.
+
 ## Commands
-All commands require permission level 4 (OP).
+(Require permission level 4/OP) `/discord4fabric reload`: Reload config from disk (will generate config if config file doesn't exist).
 
-`/discord4fabric reload`: Reload config from disk (will generate config if config file doesn't exist).
+(Require permission level 4/OP) `/discord4fabric update`: Update config to latest version.
 
-`/discord4fabric update`: Update config to latest version.
+`/discord4fabric link`: Link account.
+
+`/discord4fabric unlink`: Unlink an already linked account.
 
 ## Placeholders
 Placeholders are a way to insert variables into customizable text messages
@@ -53,6 +57,13 @@ For more info: https://placeholders.pb4.eu/user/default-placeholders/#player
 
 `%d4f:message%`: The message that the user sent. Example: `Why did you take the worm from the soup sock?`
 
+### With reply
+`%d4f:reply_fullname%`: Full name of user being replied to. Example: `Reimnop#3147`
+
+`%d4f:reply_nickname%`: Nickname of user being replied to. Example: `Reimnop`
+
+`%d4f:reply_discriminator%`: The 4-digit tag of the user being replied to. Example: `3147`
+
 ### Credits
 ![Image](https://cdn.discordapp.com/attachments/959467102962610177/983032671229870100/unknown.png)
 
@@ -60,6 +71,14 @@ For more info: https://placeholders.pb4.eu/user/default-placeholders/#server
 
 ## Minecraft to Discord messages
 `%d4f:message%`: The player's message. Example: `MS-DOS wasnt actually coded my Microsoft, but was actually bought`<sub>yes I know there's a typo</sub>
+
+### If there's no webhook
+### Webhook to plain messages
+`d4f:message`: The message after being processed by former config option.
+
+`d4f:name`: The name after being processed by former config option.
+
+For more info: https://placeholders.pb4.eu/user/default-placeholders/#player
 
 ### Credits
 ![Image](https://cdn.discordapp.com/attachments/959467102962610177/983033944733777920/unknown.png)
@@ -78,3 +97,20 @@ See here: https://placeholders.pb4.eu/user/default-placeholders/#player
 
 ## Status
 See here: https://placeholders.pb4.eu/user/default-placeholders/#server
+
+## Topic
+See here: https://placeholders.pb4.eu/user/default-placeholders/#server
+
+### Note
+Channel topic update rate limit is absurdly high, please try not to set topic update interval to below 6000
+
+Setting either status or topic update interval to -1 disables it
+
+## Avatar services
+Change your avatar services to use something other than Crafatar/MCHeads with something else by changing the `avatar_url` and `avatar_url_texture_hash` config options
+
+- %s in `avatar_url` config will get replaced by the player's UUID
+- %s in `avatar_url_texture_hash` config will get replaced by the player's skin hash (only used for [FabricTailor](https://www.curseforge.com/minecraft/mc-mods/fabrictailor) compatibility)
+
+## Custom events
+Custom events is an extremely flexible and extensible feature of this mod. It allows for custom behavior defined in JSON (sending a message when a player join, run commands when someone gets an advancement, etc). However it is quite complicated and hard to understand. You can find more information about it [here](CUSTOM_EVENTS.md)
